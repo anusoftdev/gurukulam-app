@@ -2,7 +2,8 @@ import api from './client'
 import type {
   ApiResponse, AuthUser, Student, Teacher, SchoolClass,
   AcademicYear, TeacherClassAssignment, Notice, DashboardStats,
-  AttendanceRecord, AttendanceStatus
+  AttendanceRecord, AttendanceStatus,
+  Subject, ExamType, ExamResult
 } from '../types/index.ts'
 
 // ── Auth ──────────────────────────────────────────────────────────────────
@@ -18,6 +19,12 @@ export const getClasses = () =>
 
 export const createClass = (name: string, sortOrder: number) =>
   api.post<ApiResponse<SchoolClass>>('/admin/classes', { name, sortOrder }).then(r => r.data.data)
+
+export const deleteClass = (id: number) =>
+  api.delete(`/admin/classes/${id}`)
+
+export const getSections = (classId: number) =>
+  api.get<ApiResponse<Section[]>>(`/admin/sections?classId=${classId}`).then(r => r.data.data)
 
 export const getAcademicYears = () =>
   api.get<ApiResponse<AcademicYear[]>>('/admin/academic-years').then(r => r.data.data)
@@ -73,6 +80,10 @@ export const assignTeacherToClass = (id: number, data: Record<string, unknown>) 
 export const getDashboardStats = () =>
   api.get<ApiResponse<DashboardStats>>('/admin/dashboard/stats').then(r => r.data.data)
 
+export const getStudentsForClass = (classId: number) =>
+  api.get<ApiResponse<Student[]>>('/teacher/students', { params: { classId } })
+    .then(r => r.data.data)
+
 // ── Teacher ───────────────────────────────────────────────────────────────
 
 export const getMyTeacherProfile = () =>
@@ -109,6 +120,51 @@ export const getAttendanceReport = (classId: number, year: number, month: number
 
 export const getStudentAttendance = (studentId: number, year: number, month: number) =>
   api.get<ApiResponse<AttendanceRecord[]>>(`/admin/attendance/student/${studentId}`, { params: { year, month } })
+    .then(r => r.data.data)
+
+// ── Subjects ──────────────────────────────────────────────────────────────
+
+export const getSubjects = (classId: number) =>
+  api.get<ApiResponse<Subject[]>>('/admin/subjects', { params: { classId } }).then(r => r.data.data)
+
+export const getSubjectsTeacher = (classId: number) =>
+  api.get<ApiResponse<Subject[]>>('/teacher/subjects', { params: { classId } }).then(r => r.data.data)
+
+export const createSubject = (data: { classId: number; name: string; maxMarks: number }) =>
+  api.post<ApiResponse<Subject>>('/admin/subjects', data).then(r => r.data.data)
+
+export const deleteSubject = (id: number) =>
+  api.delete(`/admin/subjects/${id}`)
+
+// ── Results ───────────────────────────────────────────────────────────────
+
+export const getResults = (classId: number, examType: ExamType) =>
+  api.get<ApiResponse<ExamResult[]>>('/admin/results', { params: { classId, examType } })
+    .then(r => r.data.data)
+
+export const saveResultsAdmin = (data: {
+  classId: number; examType: ExamType
+  results: { studentId: number; subjectId: number; marksObtained: number }[]
+}) =>
+  api.post<ApiResponse<number>>('/admin/results/batch', data).then(r => r.data.data)
+
+export const getResultsTeacher = (classId: number, examType: ExamType) =>
+  api.get<ApiResponse<ExamResult[]>>('/teacher/results', { params: { classId, examType } })
+    .then(r => r.data.data)
+
+export const saveResultsTeacher = (data: {
+  classId: number; examType: ExamType
+  results: { studentId: number; subjectId: number; marksObtained: number }[]
+}) =>
+  api.post<ApiResponse<number>>('/teacher/results/batch', data).then(r => r.data.data)
+
+export const getMyResults = () =>
+  api.get<ApiResponse<ExamResult[]>>('/student/results').then(r => r.data.data)
+
+// ── Student attendance ────────────────────────────────────────────────────
+
+export const getMyAttendance = (year: number, month: number) =>
+  api.get<ApiResponse<AttendanceRecord[]>>('/student/attendance', { params: { year, month } })
     .then(r => r.data.data)
 
 // ── Public ────────────────────────────────────────────────────────────────

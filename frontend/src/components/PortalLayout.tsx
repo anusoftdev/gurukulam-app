@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { NavLink, useNavigate, Outlet } from 'react-router-dom'
 import {
   BookOpen, LayoutDashboard, Users, GraduationCap, School,
-  LogOut, Menu, X, Bell, ChevronRight, UserCircle, CalendarCheck
+  LogOut, Menu, X, Bell, ChevronRight, UserCircle, CalendarCheck, BarChart2
 } from 'lucide-react'
 import { useAuth } from '../auth/AuthContext'
 import type { Role } from '../types/index.ts'
@@ -21,16 +21,21 @@ const NAV_ITEMS: Record<Role, NavItem[]> = {
     { label: 'Classes',    to: '/admin/classes',    icon: <School className="w-5 h-5" /> },
     { label: 'Notices',    to: '/admin/notices',    icon: <Bell className="w-5 h-5" /> },
     { label: 'Attendance', to: '/admin/attendance', icon: <CalendarCheck className="w-5 h-5" /> },
+    { label: 'Results',    to: '/admin/results',    icon: <BarChart2 className="w-5 h-5" /> },
   ],
   TEACHER: [
     { label: 'Dashboard',    to: '/teacher/dashboard',   icon: <LayoutDashboard className="w-5 h-5" /> },
     { label: 'My Profile',   to: '/teacher/profile',     icon: <UserCircle className="w-5 h-5" /> },
     { label: 'My Students',  to: '/teacher/students',    icon: <GraduationCap className="w-5 h-5" /> },
     { label: 'Attendance',   to: '/teacher/attendance',  icon: <CalendarCheck className="w-5 h-5" /> },
+    { label: 'Results',      to: '/teacher/results',     icon: <BarChart2 className="w-5 h-5" /> },
   ],
   STUDENT: [
-    { label: 'Dashboard',  to: '/student/dashboard',  icon: <LayoutDashboard className="w-5 h-5" /> },
-    { label: 'My Profile', to: '/student/profile',    icon: <UserCircle className="w-5 h-5" /> },
+    { label: 'Dashboard',   to: '/student/dashboard',   icon: <LayoutDashboard className="w-5 h-5" /> },
+    { label: 'My Profile',  to: '/student/profile',     icon: <UserCircle className="w-5 h-5" /> },
+    { label: 'Attendance',  to: '/student/attendance',  icon: <CalendarCheck className="w-5 h-5" /> },
+    { label: 'My Results',  to: '/student/results',     icon: <BarChart2 className="w-5 h-5" /> },
+    { label: 'Notices',     to: '/student/notices',     icon: <Bell className="w-5 h-5" /> },
   ],
 }
 

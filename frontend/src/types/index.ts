@@ -88,6 +88,35 @@ export interface AttendanceRecord {
   academicYear: AcademicYear
 }
 
+// ── Subjects & Results ────────────────────────────────────────────────────
+
+export interface Subject {
+  id: number
+  name: string
+  schoolClass: SchoolClass
+  academicYear: AcademicYear
+  maxMarks: number
+}
+
+export type ExamType = 'UNIT_TEST_1' | 'UNIT_TEST_2' | 'MIDTERM' | 'FINAL'
+
+export const EXAM_TYPE_LABELS: Record<ExamType, string> = {
+  UNIT_TEST_1: 'Unit Test 1',
+  UNIT_TEST_2: 'Unit Test 2',
+  MIDTERM: 'Mid-Term',
+  FINAL: 'Final Exam',
+}
+
+export interface ExamResult {
+  id: number
+  student: Student
+  subject: Subject
+  examType: ExamType
+  marksObtained: number
+  maxMarks: number
+  academicYear: AcademicYear
+}
+
 // ── Notice ────────────────────────────────────────────────────────────────
 
 export interface Notice {

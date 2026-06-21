@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Plus, School } from 'lucide-react'
+import { Plus, School, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { getClasses, createClass } from '../../api/index.ts'
+import { getClasses, createClass, deleteClass } from '../../api/index.ts'
 import Modal from '../../components/Modal'
 
 export default function ClassesPage() {
@@ -26,6 +26,16 @@ export default function ClassesPage() {
     onError: (e: any) => toast.error(e.response?.data?.message || 'Failed to create class'),
   })
 
+  const deleteMut = useMutation({
+    mutationFn: deleteClass,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['classes'] })
+      qc.invalidateQueries({ queryKey: ['dashboard-stats'] })
+      toast.success('Class deleted')
+    },
+    onError: (e: any) => toast.error(e.response?.data?.message || 'Failed to delete class'),
+  })
+
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
@@ -43,12 +53,23 @@ export default function ClassesPage() {
           <div key={i} className="card animate-pulse h-24 bg-gray-100" />
         ))}
         {classes.map(c => (
-          <div key={c.id} className="card flex flex-col items-center justify-center gap-2 py-6 text-center">
+          <div key={c.id} className="card flex flex-col items-center justify-center gap-2 py-6 text-center relative group">
             <div className="w-12 h-12 bg-brand-50 rounded-xl flex items-center justify-center">
               <School className="w-6 h-6 text-brand-600" />
             </div>
             <p className="font-semibold text-gray-800 text-lg">{c.name}</p>
             <p className="text-xs text-gray-400">Sort order: {c.sortOrder}</p>
+            <button
+              onClick={() => {
+                if (confirm(`Delete class "${c.name}"? This cannot be undone.`))
+                  deleteMut.mutate(c.id)
+              }}
+              className="absolute top-2 right-2 p-1.5 text-red-400 hover:bg-red-50 rounded-lg
+                         opacity-0 group-hover:opacity-100 transition-opacity"
+              title="Delete class"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
           </div>
         ))}
       </div>

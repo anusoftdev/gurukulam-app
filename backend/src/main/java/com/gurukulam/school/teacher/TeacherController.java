@@ -69,12 +69,18 @@ public class TeacherController {
         return ResponseEntity.ok(ApiResponse.success(students));
     }
 
+    @GetMapping("/students")
+    public ResponseEntity<ApiResponse<List<Student>>> studentsForClass(
+            @RequestParam Long classId) {
+        AcademicYear year = currentYear();
+        return ResponseEntity.ok(ApiResponse.success(
+                studentRepo.findBySchoolClassIdAndAcademicYearId(classId, year.getId())));
+    }
+
     // ── helpers ──────────────────────────────────────────────────────────
 
     private Teacher resolveTeacher(UserDetails principal) {
-        return teacherRepo.findAll().stream()
-                .filter(t -> t.getUser().getUsername().equals(principal.getUsername()))
-                .findFirst()
+        return teacherRepo.findByUserUsername(principal.getUsername())
                 .orElseThrow(() -> new NoSuchElementException("Teacher profile not found"));
     }
 

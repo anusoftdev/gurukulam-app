@@ -4,9 +4,9 @@ import { Plus, Search, UserX, Key } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import {
-  getStudents, getClasses, createStudent, deactivateStudent, resetStudentPassword
+  getStudents, getClasses, getSections, createStudent, deactivateStudent, resetStudentPassword
 } from '../../api/index.ts'
-import type { Student, SchoolClass } from '../../types/index.ts'
+import type { Student, SchoolClass, Section } from '../../types/index.ts'
 import Modal from '../../components/Modal'
 import CredentialCard from '../../components/CredentialCard'
 
@@ -212,6 +212,12 @@ function AddStudentForm({
     classId: '', sectionId: '', parentName: '', parentPhone: '', address: '', admissionDate: '',
   })
 
+  const { data: sections = [] } = useQuery<Section[]>({
+    queryKey: ['sections', form.classId],
+    queryFn: () => getSections(Number(form.classId)),
+    enabled: !!form.classId,
+  })
+
   const set = (k: string, v: string) => setForm(p => ({ ...p, [k]: v }))
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -257,15 +263,19 @@ function AddStudentForm({
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Class *</label>
           <select className="input" required value={form.classId}
-            onChange={e => set('classId', e.target.value)}>
+            onChange={e => setForm(p => ({ ...p, classId: e.target.value, sectionId: '' }))}>
             <option value="">Select class</option>
             {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Section</label>
-          <input className="input" placeholder="e.g. A" value={form.sectionId}
-            onChange={e => set('sectionId', e.target.value)} />
+          <select className="input" value={form.sectionId}
+            onChange={e => set('sectionId', e.target.value)}
+            disabled={!form.classId}>
+            <option value="">No section</option>
+            {sections.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+          </select>
         </div>
       </div>
 

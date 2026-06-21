@@ -89,9 +89,6 @@ public class AttendanceController {
     // ── helper ────────────────────────────────────────────────────────────
 
     private Teacher resolveTeacherOrNull(UserDetails principal) {
-        return teacherRepo.findAll().stream()
-                .filter(t -> t.getUser().getUsername().equals(principal.getUsername()))
-                .findFirst()
-                .orElse(null); // admin can also mark; teacher field is nullable
+        return teacherRepo.findByUserUsername(principal.getUsername()).orElse(null);
     }
 }

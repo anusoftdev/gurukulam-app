@@ -48,6 +48,14 @@ public class AdminController {
                         adminService.createAcademicYear(label, start, end, current)));
     }
 
+    // ── Sections ─────────────────────────────────────────────────────────
+
+    @GetMapping("/sections")
+    public ResponseEntity<ApiResponse<List<Section>>> getSections(
+            @RequestParam Long classId) {
+        return ResponseEntity.ok(ApiResponse.success(adminService.sectionsForClass(classId)));
+    }
+
     // ── Classes ──────────────────────────────────────────────────────────
 
     @GetMapping("/classes")
@@ -61,6 +69,12 @@ public class AdminController {
         int sortOrder = (Integer) body.get("sortOrder");
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Class created", adminService.createClass(name, sortOrder)));
+    }
+
+    @DeleteMapping("/classes/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteClass(@PathVariable Long id) {
+        adminService.deleteClass(id);
+        return ResponseEntity.ok(ApiResponse.success("Class deleted", null));
     }
 
     // ── Students ─────────────────────────────────────────────────────────

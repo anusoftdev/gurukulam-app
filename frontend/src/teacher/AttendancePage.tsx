@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { CheckCircle, XCircle, Clock, Save, CalendarDays, Users } from 'lucide-react'
 import {
-  getMyAssignments, getStudents, getAttendanceForClass, markAttendance
+  getMyAssignments, getStudentsForClass, getAttendanceForClass, markAttendance
 } from '../api/index.ts'
 import type { AttendanceStatus } from '../types/index.ts'
 
@@ -57,8 +57,8 @@ export default function AttendancePage() {
   }, [assignedClasses.length])
 
   const { data: students = [], isLoading: loadingStudents } = useQuery({
-    queryKey: ['students-for-class', selectedClassId],
-    queryFn: () => getStudents(selectedClassId!),
+    queryKey: ['teacher-students-for-class', selectedClassId],
+    queryFn: () => getStudentsForClass(selectedClassId!),
     enabled: selectedClassId !== null
   })
 

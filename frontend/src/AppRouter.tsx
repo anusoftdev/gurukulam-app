@@ -11,14 +11,19 @@ import TeachersPage from './admin/teachers/TeachersPage'
 import ClassesPage from './admin/classes/ClassesPage'
 import NoticesPage from './admin/notices/NoticesPage'
 import AttendanceReportPage from './admin/attendance/AttendanceReportPage'
+import ResultsPage from './admin/results/ResultsPage'
 
 // Teacher pages
 import TeacherDashboard from './teacher/TeacherDashboard'
 import { TeacherProfilePage, TeacherStudentsPage } from './teacher/TeacherPages'
 import AttendancePage from './teacher/AttendancePage'
+import EnterResultsPage from './teacher/EnterResultsPage'
 
 // Student pages
 import { StudentDashboard, StudentProfilePage } from './student/StudentPages'
+import MyAttendancePage from './student/MyAttendancePage'
+import MyResultsPage from './student/MyResultsPage'
+import StudentNoticesPage from './student/NoticesPage'
 
 function RoleRedirect() {
   const { user } = useAuth()
@@ -58,6 +63,7 @@ export default function AppRouter() {
         <Route path="classes"   element={<ClassesPage />} />
         <Route path="notices"    element={<NoticesPage />} />
         <Route path="attendance" element={<AttendanceReportPage />} />
+        <Route path="results"    element={<ResultsPage />} />
       </Route>
 
       {/* Teacher routes */}
@@ -71,6 +77,7 @@ export default function AppRouter() {
         <Route path="profile"   element={<TeacherProfilePage />} />
         <Route path="students"   element={<TeacherStudentsPage />} />
         <Route path="attendance" element={<AttendancePage />} />
+        <Route path="results"    element={<EnterResultsPage />} />
       </Route>
 
       {/* Student routes */}
@@ -80,8 +87,11 @@ export default function AppRouter() {
         </ProtectedRoute>
       }>
         <Route index element={<Navigate to="dashboard" replace />} />
-        <Route path="dashboard" element={<StudentDashboard />} />
-        <Route path="profile"   element={<StudentProfilePage />} />
+        <Route path="dashboard"  element={<StudentDashboard />} />
+        <Route path="profile"    element={<StudentProfilePage />} />
+        <Route path="attendance" element={<MyAttendancePage />} />
+        <Route path="results"    element={<MyResultsPage />} />
+        <Route path="notices"    element={<StudentNoticesPage />} />
       </Route>
 
       {/* Fallback */}

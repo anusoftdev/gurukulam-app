@@ -73,6 +73,18 @@ public class AdminService {
         return classRepo.save(SchoolClass.builder().name(name).sortOrder(sortOrder).build());
     }
 
+    public List<Section> sectionsForClass(Long classId) {
+        return sectionRepo.findBySchoolClassId(classId);
+    }
+
+    public void deleteClass(Long id) {
+        AcademicYear year = currentYear();
+        long studentCount = studentRepo.findBySchoolClassIdAndAcademicYearId(id, year.getId()).size();
+        if (studentCount > 0)
+            throw new IllegalStateException("Cannot delete class: " + studentCount + " student(s) are enrolled in it.");
+        classRepo.deleteById(id);
+    }
+
     // ──────────────────────────────────────────────────────────────────────
     //  STUDENTS
     // ──────────────────────────────────────────────────────────────────────
@@ -149,7 +161,7 @@ public class AdminService {
     }
 
     public Student getStudent(Long id) {
-        return studentRepo.findById(id)
+        return studentRepo.findByIdWithDetails(id)
                 .orElseThrow(() -> new NoSuchElementException("Student not found"));
     }
 
@@ -190,7 +202,8 @@ public class AdminService {
     public record CreateTeacherResult(Teacher teacher, String username, String plainPassword) {}
 
     public CreateTeacherResult createTeacher(CreateTeacherRequest req) {
-        String empId = req.employeeId() != null ? req.employeeId() : generateEmployeeId();
+        String empId = (req.employeeId() != null && !req.employeeId().isBlank())
+                ? req.employeeId() : generateEmployeeId();
         if (teacherRepo.existsByEmployeeId(empId))
             throw new IllegalArgumentException("Employee ID already exists: " + empId);
 
@@ -221,11 +234,11 @@ public class AdminService {
     }
 
     public List<Teacher> allTeachers() {
-        return teacherRepo.findAll();
+        return teacherRepo.findAllWithUser();
     }
 
     public Teacher getTeacher(Long id) {
-        return teacherRepo.findById(id)
+        return teacherRepo.findByIdWithUser(id)
                 .orElseThrow(() -> new NoSuchElementException("Teacher not found"));
     }
 
